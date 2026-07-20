@@ -1,0 +1,133 @@
+{
+  "ok": true,
+  "reviewed_by": "independent_final_visual_qa",
+  "directions": [
+    {
+      "degree": "000",
+      "verdict": "pass",
+      "expected": "up",
+      "observed": "up",
+      "reason": "Both eyes aim upward, the chin lifts, and the underside of the hard-hat brim is visible."
+    },
+    {
+      "degree": "022.5",
+      "verdict": "pass",
+      "expected": "up-right",
+      "observed": "up-right",
+      "reason": "The eyes and chin remain raised while the nose and face begin shifting toward screen-right."
+    },
+    {
+      "degree": "045",
+      "verdict": "warning",
+      "expected": "up-right",
+      "observed": "up-right",
+      "reason": "The labeled pose clearly occupies the up-right family through raised eyes and a rightward nose/head turn; blind vertical review was ambiguous at normal size."
+    },
+    {
+      "degree": "067.5",
+      "verdict": "pass",
+      "expected": "up-right",
+      "observed": "up-right",
+      "reason": "The screen-right profile strengthens while the eyes, chin, and brim perspective retain an upward pitch."
+    },
+    {
+      "degree": "090",
+      "verdict": "pass",
+      "expected": "right",
+      "observed": "right",
+      "reason": "Nose, pupils, face center, and brim perspective point unmistakably toward screen-right."
+    },
+    {
+      "degree": "112.5",
+      "verdict": "warning",
+      "expected": "down-right",
+      "observed": "down-right",
+      "reason": "The labeled loop shows the same screen-right profile as 090 with the eyes and chin beginning to pitch down; blind horizontal review conflicted on this intermediate."
+    },
+    {
+      "degree": "135",
+      "verdict": "pass",
+      "expected": "down-right",
+      "observed": "down-right",
+      "reason": "The face remains turned screen-right while lowered eyes, tucked chin, and more visible helmet top establish down."
+    },
+    {
+      "degree": "157.5",
+      "verdict": "warning",
+      "expected": "down-right",
+      "observed": "down-right",
+      "reason": "The pose is nearly down but retains a small screen-right face cue and advances smoothly into 180; blind horizontal review was ambiguous."
+    },
+    {
+      "degree": "180",
+      "verdict": "pass",
+      "expected": "down",
+      "observed": "down",
+      "reason": "Both eyes and chin point down, with the top of the hard hat and brim dominating the view."
+    },
+    {
+      "degree": "202.5",
+      "verdict": "pass",
+      "expected": "down-left",
+      "observed": "down-left",
+      "reason": "The bowed head begins turning screen-left; the nose/face shift left while the downward eye and chin cues remain."
+    },
+    {
+      "degree": "225",
+      "verdict": "warning",
+      "expected": "down-left",
+      "observed": "down-left",
+      "reason": "The labeled pose stays in the down-left family through leftward profile and lowered face; blind vertical review read the secondary axis inconsistently."
+    },
+    {
+      "degree": "247.5",
+      "verdict": "warning",
+      "expected": "down-left",
+      "observed": "down-left",
+      "reason": "The pose continues toward 270 with a clear screen-left profile and remaining downward pitch; blind secondary-axis reviews were uncertain."
+    },
+    {
+      "degree": "270",
+      "verdict": "pass",
+      "expected": "left",
+      "observed": "left",
+      "reason": "Nose, pupils, face center, and brim perspective point unmistakably toward screen-left."
+    },
+    {
+      "degree": "292.5",
+      "verdict": "pass",
+      "expected": "up-left",
+      "observed": "up-left",
+      "reason": "The face remains turned screen-left while the eyes and chin begin lifting."
+    },
+    {
+      "degree": "315",
+      "verdict": "pass",
+      "expected": "up-left",
+      "observed": "up-left",
+      "reason": "A stable screen-left profile combines with raised eyes, lifted chin, and upward brim perspective."
+    },
+    {
+      "degree": "337.5",
+      "verdict": "warning",
+      "expected": "up-left",
+      "observed": "up-left",
+      "reason": "The pose is nearly up but retains a small screen-left face cue and advances smoothly into 000; blind vertical review was ambiguous."
+    }
+  ],
+  "continuity_resolution": {
+    "verdict": "pass_with_reviewed_warnings",
+    "reason": "Metric warnings at 157.5->180 and 337.5->000 are not visible as snaps, scale pops, registration jumps, identity changes, or reversals in the labeled normal-size loop."
+  },
+  "blind_review": {
+    "validation_ok": true,
+    "cardinal_hard_gates": "pass",
+    "intermediate_warnings": "retained as warnings and resolved by labeled ordered-loop review"
+  },
+  "independent_review": {
+    "visual_qa": "pass",
+    "repair_rows": "none",
+    "accepted_warnings": ["045", "112.5", "157.5", "225", "247.5", "337.5"],
+    "continuity": "157.5->180 and 337.5->000 metric outliers are visually continuous without a reversal or size pop"
+  }
+}

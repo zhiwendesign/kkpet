@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "row": 9,
+  "directions": [
+    {"degree": "000", "verdict": "pass", "observed": "eyes and chin clearly up"},
+    {"degree": "022.5", "verdict": "pass", "observed": "upward gaze begins moving toward screen-right"},
+    {"degree": "045", "verdict": "pass", "observed": "coherent up-right head and eye turn"},
+    {"degree": "067.5", "verdict": "pass", "observed": "screen-right yaw strengthens while upward pitch remains"},
+    {"degree": "090", "verdict": "pass", "observed": "unmistakable screen-right profile family"},
+    {"degree": "112.5", "verdict": "pass", "observed": "rightward gaze begins pitching down"},
+    {"degree": "135", "verdict": "pass", "observed": "coherent down-right head and eye turn"},
+    {"degree": "157.5", "verdict": "pass", "observed": "nearly down with a remaining screen-right cue"}
+  ],
+  "continuity": {
+    "verdict": "pass",
+    "evidence": "Feet and lower body stay registered; head yaw, pitch, eye direction, brim perspective, and cheek occlusion advance without a conspicuous snap, scale pop, reversal, or broken attachment."
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "row": 10,
+  "directions": [
+    {"degree": "180", "verdict": "pass", "observed": "eyes and chin clearly down"},
+    {"degree": "202.5", "verdict": "pass", "observed": "downward gaze begins moving toward screen-left"},
+    {"degree": "225", "verdict": "pass", "observed": "coherent down-left head and eye turn"},
+    {"degree": "247.5", "verdict": "pass", "observed": "screen-left yaw strengthens while downward pitch remains"},
+    {"degree": "270", "verdict": "pass", "observed": "unmistakable screen-left profile family"},
+    {"degree": "292.5", "verdict": "pass", "observed": "leftward gaze begins pitching up"},
+    {"degree": "315", "verdict": "pass", "observed": "coherent up-left head and eye turn"},
+    {"degree": "337.5", "verdict": "pass", "observed": "nearly up with a remaining screen-left cue"}
+  ],
+  "continuity": {
+    "verdict": "pass",
+    "evidence": "The 157.5 to 180 and 337.5 to 000 boundaries are ordinary adjacent steps; feet and lower body stay registered while head yaw, pitch, brim perspective, and cheek occlusion advance without a conspicuous snap, scale pop, reversal, or broken attachment."
+  }
+}

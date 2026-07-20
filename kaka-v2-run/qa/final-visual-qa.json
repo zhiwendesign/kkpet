@@ -1,0 +1,10 @@
+{
+  "visual_qa": "pass",
+  "qa_note": "All standard motion rows and the 16-step look loop preserve the same blue-helmeted construction-worker identity, proportions, palette, clean transparency, and state-specific motion.",
+  "review_warnings": [
+    "045, 112.5, 157.5, 225, 247.5, and 337.5 have accepted blind intermediate-axis uncertainty resolved by labeled loop context.",
+    "157.5->180 and 337.5->000 metric outliers are visually continuous without a reversal or size pop."
+  ],
+  "repair_rows": [],
+  "repair_notes": "none"
+}
