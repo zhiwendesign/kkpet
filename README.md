@@ -1,6 +1,6 @@
 # 卡卡（Kaka）Codex Pet
 
-卡卡是一个蓝色头发、蓝色安全帽和黄色工装造型的 3D 玩具风 Codex 宠物。当前版本为 v2，支持完整的标准动画和 16 个环视方向。
+卡卡是一个蓝色头发、蓝色安全帽和黄色工装造型的 3D 玩具风 Codex 宠物。当前宠物版本为 v2，支持完整的标准动画和 16 个环视方向。另外提供用量联动版，在人物上方显示周剩余进度和今日 Token。
 
 ## 演示预览
 
@@ -8,20 +8,33 @@
 
 ## 下载
 
-GitHub Release 提供两种 Codex v2 宠物包，原仓库中的图集与 QA 文件保持不变：
+GitHub Release 保留原来的 Codex v2 宠物包，并新增用量联动版：
 
 | 下载包 | 适合用户 | 内容 |
 | --- | --- | --- |
 | [标准安装版](https://github.com/zhiwendesign/kkpet/releases/download/kaka-v2.0.0/kaka-codex-pet-v2.zip) | 普通用户（推荐） | `kaka/pet.json`、`kaka/spritesheet.webp` |
+| [用量联动版 1.4.0](https://github.com/zhiwendesign/kkpet/releases/download/kaka-v2.0.0/kaka-codex-pet-v2-usage-v1.4.0.zip) | 需要周用量、今日 Token 和四档状态的 macOS 用户 | 标准 v2 宠物、用量挂件、安装/卸载脚本、自动启动服务 |
 | [完整资料版](https://github.com/zhiwendesign/kkpet/releases/download/kaka-v2.0.0/kaka-codex-pet-v2-with-qa.zip) | 需要检查制作质量的用户 | 相同宠物文件，并附带图集、方向与视觉 QA |
 
-两个下载包使用同一套卡卡 v2 图集，区别仅在是否附带 QA 资料。解压后，将整个 `kaka` 文件夹复制到：
+标准安装版和完整资料版使用同一套卡卡 v2 图集，区别仅在是否附带 QA 资料。解压后，将整个 `kaka` 文件夹复制到：
 
 ```text
 ~/.codex/pets/kaka
 ```
 
 然后重启 Codex。若该位置已有同名宠物，请先备份原目录。
+
+### 用量联动版
+
+用量版仅支持 macOS 13 或更新版本。解压后进入目录，执行：
+
+```bash
+./scripts/install.sh
+```
+
+安装后在 Codex 的 `Settings > Pets` 中选择“卡卡”并点击 `Wake Pet`。以后使用 Codex 自带的“显示宠物 / 隐藏宠物”，人物和用量区会一起显示或隐藏。挂件会在登录 macOS 后自动启动，重启 Codex 或 Mac 后不需要手动重开。
+
+完整说明和源码位于 [`usage-overlay/`](usage-overlay/README.md)。
 
 ## 当前状态
 
