@@ -6,6 +6,23 @@
 
 ![卡卡在 Codex 中的演示](kkpet.gif)
 
+## 下载
+
+GitHub Release 提供两种 Codex v2 宠物包，原仓库中的图集与 QA 文件保持不变：
+
+| 下载包 | 适合用户 | 内容 |
+| --- | --- | --- |
+| [标准安装版](https://github.com/zhiwendesign/kkpet/releases/download/kaka-v2.0.0/kaka-codex-pet-v2.zip) | 普通用户（推荐） | `kaka/pet.json`、`kaka/spritesheet.webp` |
+| [完整资料版](https://github.com/zhiwendesign/kkpet/releases/download/kaka-v2.0.0/kaka-codex-pet-v2-with-qa.zip) | 需要检查制作质量的用户 | 相同宠物文件，并附带图集、方向与视觉 QA |
+
+两个下载包使用同一套卡卡 v2 图集，区别仅在是否附带 QA 资料。解压后，将整个 `kaka` 文件夹复制到：
+
+```text
+~/.codex/pets/kaka
+```
+
+然后重启 Codex。若该位置已有同名宠物，请先备份原目录。
+
 ## 当前状态
 
 - Pet ID：`kaka`
