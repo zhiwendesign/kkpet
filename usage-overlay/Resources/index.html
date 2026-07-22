@@ -7,11 +7,8 @@
   <style>
     :root {
       color-scheme: dark;
-      --blue: #3f8cff;
-      --blue-bright: #68adff;
       --yellow: #ffd44a;
       --text: rgba(238, 247, 255, 0.96);
-      --muted: rgba(172, 208, 255, 0.82);
     }
 
     * { box-sizing: border-box; }
@@ -31,21 +28,10 @@
       display: flex;
       justify-content: center;
       align-items: flex-start;
-      padding-top: 8px;
-    }
-
-    .stage {
-      position: relative;
-      width: 236px;
-      height: 244px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      padding-top: 4px;
     }
 
     .usage-card {
-      position: relative;
-      z-index: 5;
       width: 132px;
       min-height: 34px;
       padding: 1px 0;
@@ -53,47 +39,9 @@
       flex-direction: column;
       align-items: stretch;
       gap: 5px;
-      opacity: 0.84;
-      transition: opacity 180ms ease;
-      cursor: grab;
+      opacity: 0.88;
       filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.52));
-    }
-
-    .stage:hover .usage-card {
-      opacity: 1;
-    }
-
-    .usage-card:active { cursor: grabbing; }
-
-    .today-label {
-      color: var(--yellow);
-      font-size: 10px;
-      font-weight: 720;
-      line-height: 13px;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-    }
-
-    .today-line {
-      display: flex;
-      align-items: baseline;
-      justify-content: center;
-      gap: 4px;
-      min-width: 0;
-      white-space: nowrap;
-    }
-
-    .today-value {
-      max-width: 100%;
-      overflow: hidden;
-      color: var(--text);
-      font-size: 10px;
-      font-weight: 680;
-      line-height: 13px;
-      font-variant-numeric: tabular-nums;
-      letter-spacing: 0.01em;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.56);
+      pointer-events: none;
     }
 
     .bar {
@@ -128,221 +76,60 @@
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.78);
     }
 
-    .character-wrap {
-      position: relative;
-      width: 180px;
-      height: 154px;
-      margin-top: 7px;
-      display: grid;
-      place-items: start center;
-      overflow: visible;
-      pointer-events: auto;
-      cursor: default;
+    .today-line {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 4px;
+      min-width: 0;
+      white-space: nowrap;
     }
 
-    .sprite {
-      width: 112px;
-      height: 121.3333px;
-      margin-top: 1px;
-      background: url("kaka-spritesheet.webp") no-repeat 0 0 / 896px 1334.6667px;
-      image-rendering: pixelated;
-      filter: drop-shadow(0 6px 6px rgba(0, 0, 0, 0.18));
+    .today-label {
+      color: var(--yellow);
+      font-size: 10px;
+      font-weight: 720;
+      line-height: 13px;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
     }
 
-    .lying-sprite {
-      display: none;
-      width: 184px;
-      height: auto;
-      margin-top: -29px;
-      filter: drop-shadow(0 6px 6px rgba(0, 0, 0, 0.17));
+    .today-value {
+      max-width: 100%;
+      overflow: hidden;
+      color: var(--text);
+      font-size: 10px;
+      font-weight: 680;
+      line-height: 13px;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.01em;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.56);
     }
 
-    .stage.lying .sprite { display: none; }
-    .stage.lying .lying-sprite { display: block; }
-    .stage.is-acting.lying .sprite { display: block; }
-    .stage.is-acting.lying .lying-sprite { display: none; }
-
-    .stage.loading .percent,
-    .stage.loading .today-value {
+    .loading .percent,
+    .loading .today-value {
       opacity: 0.55;
     }
-
-    html.companion .usage-card {
-      cursor: default;
-      opacity: 0.86;
-      pointer-events: none;
-    }
-
   </style>
 </head>
-<body>
-  <main class="stage loading" id="stage">
-    <section class="usage-card" title="拖动卡片可移动卡卡">
-      <div class="bar" id="weekBar" role="progressbar" aria-label="本周剩余额度" aria-valuemin="0" aria-valuemax="100">
-        <div class="bar-fill" id="barFill"></div>
-        <strong class="percent" id="percent">—</strong>
-      </div>
-      <div class="today-line" id="todayLine">
-        <span class="today-label">Today:</span>
-        <strong class="today-value" id="dailyTokens">—</strong>
-      </div>
-    </section>
-
-    <div class="character-wrap" id="characterWrap" title="摸摸卡卡">
-      <div class="sprite" id="sprite" aria-label="卡卡"></div>
-      <img class="lying-sprite" src="kaka-lying.png" alt="卡卡累得躺下了">
+<body class="loading">
+  <section class="usage-card" aria-label="卡卡用量">
+    <div class="bar" id="weekBar" role="progressbar" aria-label="本周剩余额度" aria-valuemin="0" aria-valuemax="100">
+      <div class="bar-fill" id="barFill"></div>
+      <strong class="percent" id="percent">—</strong>
     </div>
-  </main>
+    <div class="today-line" id="todayLine">
+      <span class="today-label">Today:</span>
+      <strong class="today-value" id="dailyTokens">—</strong>
+    </div>
+  </section>
 
   <script>
-    const stage = document.getElementById("stage");
-    const characterWrap = document.getElementById("characterWrap");
-    const sprite = document.getElementById("sprite");
-    const percent = document.getElementById("percent");
     const weekBar = document.getElementById("weekBar");
     const barFill = document.getElementById("barFill");
+    const percent = document.getElementById("percent");
     const dailyTokens = document.getElementById("dailyTokens");
-
-    const states = {
-      lively: {
-        label: "活蹦乱跳",
-        baseAnimation: "state-lively",
-        actionAnimation: "jump-lively"
-      },
-      normal: {
-        label: "平平淡淡",
-        baseAnimation: "state-normal",
-        actionAnimation: "jump-normal"
-      },
-      tired: {
-        label: "疲惫",
-        baseAnimation: "state-tired",
-        actionAnimation: "jump-tired"
-      },
-      lying: {
-        label: "躺下休息",
-        baseAnimation: "state-lying",
-        actionAnimation: "jump-lying"
-      }
-    };
-
-    const idleFrames = [
-      { row: 0, column: 0, duration: 280 * 6 },
-      { row: 0, column: 1, duration: 110 * 6 },
-      { row: 0, column: 2, duration: 110 * 6 },
-      { row: 0, column: 3, duration: 140 * 6 },
-      { row: 0, column: 4, duration: 140 * 6 },
-      { row: 0, column: 5, duration: 320 * 6 }
-    ];
-
-    function makeRow(row, count, duration, lastDuration) {
-      return Array.from({ length: count }, (_, column) => ({
-        row,
-        column,
-        duration: column === count - 1 ? lastDuration : duration
-      }));
-    }
-
-    function scaleDurations(frames, factor) {
-      return frames.map(frame => ({ ...frame, duration: Math.round(frame.duration * factor) }));
-    }
-
-    const livelyRest = scaleDurations(idleFrames, 1.5);
-    const normalRest = scaleDurations(idleFrames, 2);
-    const tiredRest = [
-      { row: 5, column: 0, duration: 5200 },
-      { row: 5, column: 1, duration: 900 },
-      { row: 5, column: 0, duration: 5200 }
-    ];
-
-    const waveIntro = [
-      { row: 3, column: 0, duration: 160 },
-      { row: 3, column: 1, duration: 170 },
-      { row: 3, column: 2, duration: 190 },
-      { row: 3, column: 1, duration: 160 },
-      { row: 3, column: 2, duration: 180 },
-      { row: 3, column: 3, duration: 220 }
-    ];
-
-    const livelyAction = [
-      ...makeRow(4, 5, 78, 120),
-      ...makeRow(4, 5, 92, 150),
-      { row: 0, column: 0, duration: 220 }
-    ];
-
-    const normalAction = [
-      ...makeRow(4, 5, 155, 300),
-      { row: 0, column: 0, duration: 420 }
-    ];
-
-    const tiredAction = [
-      { row: 4, column: 0, duration: 260 },
-      { row: 4, column: 1, duration: 340 },
-      { row: 4, column: 0, duration: 620 },
-      { row: 5, column: 0, duration: 720 }
-    ];
-
-    const lyingAction = [
-      { row: 5, column: 0, duration: 360 },
-      { row: 5, column: 1, duration: 360 },
-      { row: 4, column: 0, duration: 420 },
-      { row: 4, column: 1, duration: 460 },
-      { row: 5, column: 0, duration: 680 }
-    ];
-
-    const animationSets = {
-      "state-lively": {
-        frames: livelyRest,
-        loop: true,
-        loopStart: 0
-      },
-      "state-normal": {
-        frames: normalRest,
-        loop: true,
-        loopStart: 0
-      },
-      "state-tired": {
-        frames: tiredRest,
-        loop: true,
-        loopStart: 0
-      },
-      "state-lying": {
-        frames: [{ row: 5, column: 0, duration: 1000 }],
-        loop: true,
-        loopStart: 0
-      },
-      "jump-lively": {
-        frames: livelyAction,
-        loop: false
-      },
-      "jump-normal": {
-        frames: normalAction,
-        loop: false
-      },
-      "jump-tired": {
-        frames: tiredAction,
-        loop: false
-      },
-      "jump-lying": {
-        frames: lyingAction,
-        loop: false
-      }
-    };
-
-    let currentState = "normal";
-    let animation = null;
-    let frameIndex = 0;
-    let nextFrameAt = 0;
-    let pointerOverCharacter = false;
-
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-
-    function stateFor(remaining) {
-      if (remaining >= 80) return "lively";
-      if (remaining >= 20) return "normal";
-      if (remaining >= 5) return "tired";
-      return "lying";
-    }
 
     function formatTokens(value) {
       if (!Number.isFinite(value)) return "—";
@@ -352,118 +139,27 @@
       return new Intl.NumberFormat("en-US").format(value);
     }
 
-    function setState(name) {
-      const changed = currentState !== name;
-      currentState = name;
-      stage.classList.remove("loading", "lively", "normal", "tired", "lying");
-      stage.classList.add(name);
-      const spec = states[name];
-      characterWrap.title = `${spec.label} · 移入先挥手，点击直接播放动作`;
-      sprite.setAttribute("aria-label", `卡卡：${spec.label}`);
-      if (changed || animation == null) restartBaseAnimation();
-    }
-
-    function startAnimation(name, selected = animationSets[name]) {
-      const frames = reducedMotion.matches ? [selected.frames[0]] : selected.frames;
-      animation = {
-        name,
-        frames,
-        loop: selected.loop === true,
-        loopStart: selected.loopStart || 0,
-        waveFrameCount: selected.waveFrameCount || 0
-      };
-      frameIndex = 0;
-      nextFrameAt = performance.now() + animation.frames[0].duration;
-      drawFrame();
-    }
-
-    function restartBaseAnimation() {
-      stage.classList.remove("is-acting");
-      sprite.dataset.actionTrigger = "";
-      sprite.dataset.actionPhase = "";
-      startAnimation(states[currentState].baseAnimation);
-    }
-
-    function playAction(trigger = "hover") {
-      if (reducedMotion.matches) return;
-      stage.classList.add("is-acting");
-      sprite.dataset.actionTrigger = trigger;
-      const actionName = states[currentState].actionAnimation;
-      const selected = animationSets[actionName];
-      if (trigger === "hover") {
-        startAnimation(actionName, {
-          ...selected,
-          frames: [...waveIntro, ...selected.frames],
-          waveFrameCount: waveIntro.length
-        });
+    window.__kakaUpdate = function update(snapshot) {
+      const remaining = snapshot?.remainingPercent == null
+        ? Number.NaN
+        : Number(snapshot.remainingPercent);
+      if (Number.isFinite(remaining)) {
+        const clamped = Math.min(100, Math.max(0, Math.round(remaining)));
+        percent.textContent = `${clamped}%`;
+        barFill.style.width = `${clamped}%`;
+        weekBar.setAttribute("aria-valuenow", String(clamped));
       } else {
-        startAnimation(actionName, selected);
+        percent.textContent = "—";
+        barFill.style.width = "0%";
+        weekBar.removeAttribute("aria-valuenow");
       }
-    }
 
-    function setPointerOverCharacter(isOver) {
-      if (pointerOverCharacter === isOver) return;
-      pointerOverCharacter = isOver;
-      if (isOver) playAction("hover");
-    }
-
-    function drawFrame() {
-      const frame = animation.frames[frameIndex];
-      const cellWidth = 112;
-      const cellHeight = 208 * (112 / 192);
-      sprite.dataset.avatarState = animation.name;
-      sprite.dataset.actionPhase = animation.loop
-        ? ""
-        : (frameIndex < animation.waveFrameCount ? "wave" : "state-action");
-      sprite.dataset.frameDuration = String(frame.duration);
-      sprite.style.backgroundPosition = `${-frame.column * cellWidth}px ${-frame.row * cellHeight}px`;
-    }
-
-    function animate(now, scheduleNext = true) {
-      if (animation != null && now >= nextFrameAt && animation.frames.length > 1) {
-        frameIndex += 1;
-        if (frameIndex >= animation.frames.length) {
-          if (!animation.loop) {
-            restartBaseAnimation();
-            if (scheduleNext) requestAnimationFrame(animate);
-            return;
-          }
-          frameIndex = animation.loopStart;
-        }
-        drawFrame();
-        nextFrameAt = now + animation.frames[frameIndex].duration;
-      }
-      if (scheduleNext) requestAnimationFrame(animate);
-    }
-
-    window.__kakaUpdate = function(data) {
-      const remaining = data.remainingPercent == null ? Number.NaN : Number(data.remainingPercent);
-      if (!Number.isFinite(remaining)) return;
-      const clamped = Math.max(0, Math.min(100, remaining));
-      const tokens = data.dailyTokens == null ? Number.NaN : Number(data.dailyTokens);
-      percent.textContent = `${clamped}%`;
-      barFill.style.width = `${clamped}%`;
-      weekBar.setAttribute("aria-valuenow", String(clamped));
+      const tokens = snapshot?.dailyTokens == null
+        ? Number.NaN
+        : Number(snapshot.dailyTokens);
       dailyTokens.textContent = formatTokens(tokens);
-      dailyTokens.title = Number.isFinite(tokens)
-        ? new Intl.NumberFormat("en-US").format(tokens)
-        : "";
-      setState(stateFor(clamped));
+      document.body.classList.remove("loading");
     };
-
-    window.__kakaTriggerAction = playAction;
-    window.__kakaPointerMoved = function(x, y) {
-      const element = document.elementFromPoint(x, y);
-      setPointerOverCharacter(Boolean(element && element.closest("#characterWrap")));
-    };
-    window.__kakaPointerLeft = () => setPointerOverCharacter(false);
-    characterWrap.addEventListener("mouseenter", () => setPointerOverCharacter(true));
-    characterWrap.addEventListener("mouseleave", () => setPointerOverCharacter(false));
-    characterWrap.addEventListener("click", () => playAction("click"));
-    reducedMotion.addEventListener("change", restartBaseAnimation);
-
-    restartBaseAnimation();
-    requestAnimationFrame(animate);
   </script>
 </body>
 </html>

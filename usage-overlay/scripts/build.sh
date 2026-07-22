@@ -7,6 +7,7 @@ CONTENTS="$APP/Contents"
 MACOS="$CONTENTS/MacOS"
 RESOURCES="$CONTENTS/Resources"
 
+rm -rf "$APP"
 mkdir -p "$MACOS" "$RESOURCES"
 
 xcrun swiftc \
@@ -18,9 +19,6 @@ xcrun swiftc \
 
 cp "$ROOT/Resources/Info.plist" "$CONTENTS/Info.plist"
 cp "$ROOT/Resources/index.html" "$RESOURCES/index.html"
-cp "$ROOT/Resources/pet.json" "$RESOURCES/pet.json"
-cp "$ROOT/Resources/kaka-spritesheet.webp" "$RESOURCES/kaka-spritesheet.webp"
-cp "$ROOT/Resources/kaka-lying.png" "$RESOURCES/kaka-lying.png"
 
 codesign --force --deep --sign - "$APP" >/dev/null
 echo "$APP"

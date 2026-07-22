@@ -165,7 +165,7 @@ private final class CodexUsageService {
                     "clientInfo": [
                         "name": "kaka-usage-overlay",
                         "title": "卡卡用量悬浮层",
-                        "version": "1.4.0"
+                        "version": "1.5.0"
                     ],
                     "capabilities": [
                         "experimentalApi": true,
@@ -324,97 +324,15 @@ private final class CodexUsageService {
     }
 }
 
-private final class DraggableWebView: WKWebView {
-    private var hoverTrackingArea: NSTrackingArea?
-    private let logsHoverForQA = CommandLine.arguments.contains("--qa-log-hover")
-    private var lastQAHoverState: String?
-
-    override func updateTrackingAreas() {
-        super.updateTrackingAreas()
-        if let hoverTrackingArea {
-            removeTrackingArea(hoverTrackingArea)
-        }
-        let trackingArea = NSTrackingArea(
-            rect: .zero,
-            options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited, .mouseMoved],
-            owner: self,
-            userInfo: nil
-        )
-        addTrackingArea(trackingArea)
-        hoverTrackingArea = trackingArea
-    }
-
-    override func mouseEntered(with event: NSEvent) {
-        forwardPointer(event)
-    }
-
-    override func mouseMoved(with event: NSEvent) {
-        forwardPointer(event)
-    }
-
-    override func mouseExited(with event: NSEvent) {
-        evaluateJavaScript("window.__kakaPointerLeft?.()")
-        writeHoverStateForQA("outside")
-    }
-
-    override func mouseDown(with event: NSEvent) {
-        let point = convert(event.locationInWindow, from: nil)
-        let webPoint = NSPoint(x: point.x, y: isFlipped ? point.y : bounds.height - point.y)
-        let start = NSEvent.mouseLocation
-        window?.performDrag(with: event)
-        let end = NSEvent.mouseLocation
-        guard hypot(end.x - start.x, end.y - start.y) < 4 else { return }
-
-        let script = """
-        (() => {
-          const element = document.elementFromPoint(\(webPoint.x), \(webPoint.y));
-          if (element && element.closest('#characterWrap')) {
-            window.__kakaTriggerAction?.('click');
-          }
-        })()
-        """
-        evaluateJavaScript(script)
-    }
-
-    private func forwardPointer(_ event: NSEvent) {
-        let point = convert(event.locationInWindow, from: nil)
-        let webPoint = NSPoint(x: point.x, y: isFlipped ? point.y : bounds.height - point.y)
-        let script = """
-        window.__kakaPointerMoved?.(\(webPoint.x), \(webPoint.y));
-        (() => {
-          const sprite = document.getElementById('sprite');
-          return `${sprite?.dataset.avatarState || ''}:${sprite?.dataset.actionPhase || ''}`;
-        })();
-        """
-        evaluateJavaScript(script) { [weak self] result, _ in
-            self?.writeHoverStateForQA(result as? String ?? "unknown")
-        }
-    }
-
-    private func writeHoverStateForQA(_ state: String) {
-        guard logsHoverForQA, lastQAHoverState != state else { return }
-        lastQAHoverState = state
-        writeQALog("hover-state=\(state)\n")
-    }
-
-    private func writeQALog(_ message: String) {
-        guard let data = message.data(using: .utf8) else { return }
-        try? FileHandle.standardOutput.write(contentsOf: data)
-    }
-}
-
 private final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate {
     private var panel: NSPanel!
     private var webView: WKWebView!
     private var usageService: CodexUsageService?
     private var petMonitor: CodexPetMonitor?
-    private var globalPointerMonitor: Any?
     private var currentSnapshot = UsageSnapshot.loading
     private var currentPetPresentation = CodexPetPresentation.unavailable
-    private var pointerWasInsideCharacter = false
     private var webViewReady = false
-    private let companionPanelSize = NSSize(width: 244, height: 260)
-    private let standalonePanelSize = NSSize(width: 244, height: 260)
+    private let panelSize = NSSize(width: 156, height: 48)
 
     private var isPreviewMode: Bool {
         CommandLine.arguments.contains("--preview")
@@ -455,7 +373,6 @@ private final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDe
             }
             petMonitor = monitor
             monitor.start()
-            installGlobalPointerMonitor()
         } else {
             panel.orderFrontRegardless()
         }
@@ -468,9 +385,6 @@ private final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDe
     }
 
     func applicationWillTerminate(_ notification: Notification) {
-        if let globalPointerMonitor {
-            NSEvent.removeMonitor(globalPointerMonitor)
-        }
         petMonitor?.stop()
         usageService?.stop()
     }
@@ -480,7 +394,7 @@ private final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDe
     }
 
     private func makePanel() {
-        let size = isCompanionMode ? companionPanelSize : standalonePanelSize
+        let size = panelSize
         let screenFrame = NSScreen.main?.visibleFrame ?? NSRect(x: 0, y: 0, width: 1440, height: 900)
         let origin = NSPoint(
             x: screenFrame.maxX - size.width - 24,
@@ -498,7 +412,7 @@ private final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDe
         panel.isOpaque = false
         panel.hasShadow = false
         panel.hidesOnDeactivate = false
-        panel.acceptsMouseMovedEvents = true
+        panel.acceptsMouseMovedEvents = false
         panel.isMovableByWindowBackground = !isCompanionMode
         panel.ignoresMouseEvents = isCompanionMode
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
@@ -508,7 +422,7 @@ private final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDe
 
         let configuration = WKWebViewConfiguration()
 
-        webView = DraggableWebView(frame: NSRect(origin: .zero, size: size), configuration: configuration)
+        webView = WKWebView(frame: NSRect(origin: .zero, size: size), configuration: configuration)
         webView.navigationDelegate = self
         webView.setValue(false, forKey: "drawsBackground")
         webView.autoresizingMask = [.width, .height]
@@ -523,9 +437,6 @@ private final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDe
     }
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        if isCompanionMode {
-            webView.evaluateJavaScript("document.documentElement.classList.add('companion');")
-        }
         webViewReady = true
         render(currentSnapshot)
         applyPetPresentation()
@@ -540,50 +451,9 @@ private final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDe
             if !panel.isVisible {
                 panel.orderFrontRegardless()
             }
-            updatePointerState(at: NSEvent.mouseLocation)
         } else if panel.isVisible {
-            pointerWasInsideCharacter = false
-            webView.evaluateJavaScript("window.__kakaPointerLeft?.();")
             panel.orderOut(nil)
         }
-    }
-
-    private func installGlobalPointerMonitor() {
-        globalPointerMonitor = NSEvent.addGlobalMonitorForEvents(
-            matching: [.mouseMoved, .leftMouseDown]
-        ) { [weak self] event in
-            DispatchQueue.main.async {
-                self?.handleGlobalPointerEvent(event)
-            }
-        }
-    }
-
-    private func handleGlobalPointerEvent(_ event: NSEvent) {
-        guard isCompanionMode, panel.isVisible, webViewReady else { return }
-        let isInside = updatePointerState(at: NSEvent.mouseLocation)
-        if event.type == .leftMouseDown, isInside {
-            webView.evaluateJavaScript("window.__kakaTriggerAction?.('click');")
-        }
-    }
-
-    @discardableResult
-    private func updatePointerState(at point: NSPoint) -> Bool {
-        let frame = panel.frame
-        let characterRect = NSRect(
-            x: frame.minX + 32,
-            y: frame.maxY - 203,
-            width: 180,
-            height: 154
-        )
-        let isInside = NSMouseInRect(point, characterRect, false)
-        guard isInside != pointerWasInsideCharacter else { return isInside }
-        pointerWasInsideCharacter = isInside
-        if isInside {
-            webView.evaluateJavaScript("window.__kakaPointerMoved?.(122, 120);")
-        } else {
-            webView.evaluateJavaScript("window.__kakaPointerLeft?.();")
-        }
-        return isInside
     }
 
     private func positionPanelAbovePet(_ presentation: CodexPetPresentation) {
@@ -598,12 +468,11 @@ private final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDe
         let primaryTop = primaryScreen?.frame.maxY ?? 900
         let petTopInAppKit = primaryTop - anchorY
         let petWidth: CGFloat = 112
-        let characterCenterOffset: CGFloat = 122
-        let characterTopOffset: CGFloat = 50
+        let usageTopOffset: CGFloat = 46
 
         var origin = NSPoint(
-            x: anchorX + petWidth / 2 - characterCenterOffset,
-            y: petTopInAppKit + characterTopOffset - companionPanelSize.height
+            x: anchorX + petWidth / 2 - panelSize.width / 2,
+            y: petTopInAppKit + usageTopOffset - panelSize.height
         )
 
         let petPoint = NSPoint(x: anchorX + petWidth / 2, y: petTopInAppKit)
@@ -611,8 +480,8 @@ private final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDe
             ?? primaryScreen
             ?? NSScreen.main
         if let visibleFrame = targetScreen?.visibleFrame {
-            origin.x = min(max(origin.x, visibleFrame.minX), visibleFrame.maxX - companionPanelSize.width)
-            origin.y = min(max(origin.y, visibleFrame.minY), visibleFrame.maxY - companionPanelSize.height)
+            origin.x = min(max(origin.x, visibleFrame.minX), visibleFrame.maxX - panelSize.width)
+            origin.y = min(max(origin.y, visibleFrame.minY), visibleFrame.maxY - panelSize.height)
         }
 
         let currentOrigin = panel.frame.origin
